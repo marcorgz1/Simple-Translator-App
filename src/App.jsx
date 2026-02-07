@@ -51,7 +51,7 @@ function App() {
     */
     const timeoutId = setTimeout(() => {
       handleSubmit();
-    }, 500);
+    }, 1000);
 
     // Función para limpiar el temporizador una vez el texto ya ha sido traducido
     return () => clearTimeout(timeoutId);
@@ -102,61 +102,72 @@ function App() {
 
 
   return (
-    <>
-      <h1 className='text-4xl text-center mt-8 mb-28'>Simple translator app</h1>
+    <main className="flex flex-col justify-center items-center bg-[#ddd] font-['Onest'] min-h-screen">
+      <h1 className='text-4xl text-center mt-8 mb-4'>Simple translator app</h1>
+      <p className='text-sm text-center font-extralight text-gray-400 mb-16'>Translate text fast between different languages</p>
       <form onSubmit={handleSubmit}>
-        <section className='flex gap-48'>
-          <div className="flex flex-col gap-8 border border-gray-400 px-6 py-4 rounded-md">
-            <p className='text-sm text-gray-400'>De</p>
-            <select 
-              name="origin_language_selector" 
-              id="origin_language_selector" 
-              value={sourceLanguage}
-              // Almacenar en el estado "sourceLanguage" el idioma seleccionado por el usuario
-              onChange={(ev) => setSourceLanguage(ev.target.value)}>
-              {
-                availableLanguages.map((availableLanguage) => (
-                  <option key={availableLanguage.code} value={availableLanguage.code}>
-                    {availableLanguage.name}
-                  </option>
-                ))
-              }
-            </select>
-            <textarea
-            className='text-sm font-light'
-              name="to_translate_text" 
-              id="to_translate_text"
-              value={text}
-              // Almacenar el texto escrito por el usuario en el estado "text"
-              onChange={(ev) => setText(ev.target.value)}
-              placeholder='Escribe tu texto...'
-              cols="30" 
-              rows="10"></textarea>
-          </div>
-          <div className="flex flex-col gap-6 border border-gray-400 px-8 py-4 rounded-md">
-            <p className='text-sm text-gray-400'>A</p>
-            <select 
-              name="destination_language_selector" 
-              id="destination_language_selector"
-              // Mostrar en el select el idioma seleccionado por el usuario
-              value={targetLanguage}
-              // Almacenar en el estado "targetLanguage" el idioma seleccionado por el usuario
-              onChange={(ev) => setTargetLanguage(ev.target.value)}>
-            {
-              availableLanguages.map((availableLanguage) => (
-                <option key={availableLanguage.code} value={availableLanguage.code}>
-                  {availableLanguage.name}
-                </option>
-              ))
-            }  
-              
-            </select>
-            <div className='text-sm w-full h-40 border border-gray-200 px-12 py-6'>{translatedText}</div>
-          </div>
-          <p className='text-sm font-semibold text-red-500'>{error}</p>
-        </section>
+        <div className="flex bg-white max-w-6xl rounded-4xl shadow-xl">
+            <div className="p-8">
+              <div className="flex items-center justify-center gap-6 mb-6">
+                <label className="text-sm font-semibold text-gray-700">
+                  De
+                </label>
+                <select
+                  className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer"
+                  name="origin_language_selector"
+                  id="origin_language_selector"
+                  value={sourceLanguage}
+                  onChange={(ev) => setSourceLanguage(ev.target.value)}
+                >
+                  {availableLanguages.map((lang) => (
+                    <option key={lang.code} value={lang.code}>
+                      {lang.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <textarea
+                className="w-full h-64 p-4 text-gray-500 text-light leading-relaxed bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring focus:ring-blue-300 focus:bg-white transition-all"
+                name="to_translate_text"
+                id="to_translate_text"
+                value={text}
+                onChange={(ev) => setText(ev.target.value)}
+                placeholder="Escribe o pega tu texto aquí..."
+              />
+            </div>
+
+            <div className="rounded-r-2xl p-8 bg-gradient-to-br from-blue-50 to-purple-50">
+              <div className="flex items-center justify-center gap-6 mb-6">
+                <label className="text-sm font-semibold text-gray-700">
+                  A
+                </label>
+                <select
+                  className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all cursor-pointer"
+                  name="destination_language_selector"
+                  id="destination_language_selector"
+                  value={targetLanguage}
+                  onChange={(ev) => setTargetLanguage(ev.target.value)}
+                >
+                  {availableLanguages.map((lang) => (
+                    <option key={lang.code} value={lang.code}>
+                      {lang.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="w-full h-64 p-4 text-gray-600 text-base leading-relaxed bg-white border border-gray-200 rounded-xl">
+                {translatedText || (
+                  <span className="text-gray-400 font-light italic">
+                    La traducción aparecerá aquí...
+                  </span>
+                )}
+              </div>
+            </div>
+        </div>
       </form>
-    </>
+    </main>
   );
 };
 
