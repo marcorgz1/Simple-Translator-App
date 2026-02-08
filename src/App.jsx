@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import translationApi from '../services/api.js';
 import './App.css';
-import { useEffect } from 'react';
 
 function App() {
   // Estado para manejar el texto introducido por el usuario
@@ -65,33 +65,18 @@ function App() {
     
     // Agregar momento de carga mientras se realiza la llamada correspondiente a la API
     setIsLoading(true);
-    setError('');
 
     try {
       // Hacer llamada a la API de MyMemory Translation para traducir el texto correspondiente
       // Se pasan como parámetros los idiomas de origen y destino
-      const response = await fetch(
-        `https://api.mymemory.translated.net/get?q=${encodeURIComponent(
-          text
-        )}&langpair=${sourceLanguage}|${targetLanguage}`
-      );
+      const translatedText = await translationApi.translate(text, sourceLanguage, targetLanguage);
 
-      const data = await response.json();
-      console.log('Datos obtenidos: ', data);
-
-      // Si la llamada a la API se realiza correctamente, almacenar el valor 
-      // de la propiedad "translatedText" del objeto de la respuesta de la API
-      // en el estado "translatedText"
-
-      // Por otro lado, si la llamada NO se realiza correctamente mostrar mensaje de error
-      if (data.responseStatus === 200) {
-        setTranslatedText(data.responseData.translatedText);
+      if (translatedText === 200) {
+        setTranslatedText(translatedText);
+        console.log('Texto traducido: ', translatedText);
       } else {
         setError('La traducción del texto ha fallado. Por favor, inténtelo de nuevo.');
       }
-
-      console.log('Texto sin traducir: ', text);
-      console.log('Texto traducido: ', translatedText);
     } catch (err) {
       setError('Error al conectar con el servidor.', err);      
     } finally {
@@ -157,15 +142,25 @@ function App() {
                 </select>
               </div>
 
-              <div className="w-full h-64 p-4 text-gray-600 text-base leading-relaxed bg-white border border-gray-200 rounded-xl">
-                {translatedText || (
+              <div className="w-full h-64 p-4 text-gray-600 bg-white border border-gray-200 rounded-xl">
+              {
+                isLoading ? (
+                  <div className="flex flex-col items-center justify-center h-full">
+                    <div className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mb-2"></div>
+                    <span className="text-gray-500 text-sm">Traduciendo...</span>
+                  </div>
+                ) : translatedText ? (
+                  translatedText
+                ) : (
                   <span className="text-gray-400 font-light italic">
                     La traducción aparecerá aquí...
                   </span>
-                )}
+                )
+              }
               </div>
             </div>
         </div>
+        <p className='text-sm font-semibold text-red-500'>{error}</p>
       </form>
     </main>
   );
